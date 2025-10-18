@@ -204,6 +204,41 @@ h1 img {
   box-shadow: 0 0 0 4px var(--yellow);
 }
 
+/* Collected animation: rotate and fade out */
+.water-can.collected {
+  animation: collectRotate 0.45s ease forwards;
+}
+
+@keyframes collectRotate {
+  0% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+  60% { transform: translate(-50%, -50%) scale(1.08) rotate(25deg); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0.3) rotate(90deg); opacity: 0; }
+}
+
+/* Missed animation: drop fades out quickly */
+.water-can.missed {
+  animation: missFade 0.45s ease forwards;
+}
+
+@keyframes missFade {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -30%) scale(0.8); opacity: 0; }
+}
+
+/* Obstacle hit animation: small shake then fade */
+.obstacle.hit {
+  animation: obstacleHit 0.5s cubic-bezier(.36,.07,.19,.97) forwards;
+}
+
+@keyframes obstacleHit {
+  0% { transform: translate(0,0) scale(1); }
+  20% { transform: translate(-6px,0) rotate(-6deg); }
+  40% { transform: translate(6px,0) rotate(6deg); }
+  60% { transform: translate(-4px,0) rotate(-4deg); }
+  80% { transform: translate(2px,0) rotate(2deg); opacity: 1; }
+  100% { transform: translate(0,-10px) scale(0.8); opacity: 0; }
+}
+
 @keyframes popUp {
   0% {
     transform: scale(0.5); /* Start scaling from the center */

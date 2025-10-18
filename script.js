@@ -14,9 +14,6 @@ function resetGame() {
   if (diffEl) diffEl.textContent = currentDifficulty;
   const goalEl = document.getElementById('goal-cans');
   if (goalEl) goalEl.textContent = goalCans;
-  // reset strikes and update lives
-  strikes = 0;
-  updateLivesUI();
   createGrid();
 }
 
@@ -56,7 +53,6 @@ let gameActive = false;      // Tracks if game is currently running
 let spawnInterval;           // Holds the interval for spawning items
 let timerInterval;           // Holds the interval for the countdown timer
 let timeLeft = defaultTime;  // Time left in seconds
-let strikes = 0;             // Number of obstacle hits (crosses)
 // Milestones
 let milestones = [];
 let triggeredMilestones = new Set();
@@ -199,15 +195,13 @@ function spawnWaterCan() {
   // If a can was present and is being cleared, that's a miss — play miss sound and register a strike
   for (const cell of cells) {
     const existingCan = cell.querySelector('.water-can');
-    if (existingCan) {
+    if (existingCan && existingCan.dataset.collected !== '1') {
       SoundManager.play(SoundManager.miss);
-      cell.innerHTML = '';
-      strikes++;
-      updateLivesUI();
-      if (strikes >= 3) {
-        endGame();
-        return; // stop spawning when game ended
-      }
+      // animate miss then remove the can
+      existingCan.classList.add('missed');
+      existingCan.addEventListener('animationend', () => {
+        if (cell) cell.innerHTML = '';
+      }, { once: true });
     } else {
       cell.innerHTML = '';
     }
@@ -231,18 +225,20 @@ function spawnWaterCan() {
         if (!gameActive) return;
         // Play hit sound if available
         SoundManager.play(SoundManager.hit);
-        // Apply penalty: reduce cans if any, and add a strike
-        if (currentCans > 0) currentCans--;
-        strikes++;
-        updateLivesUI();
-        document.getElementById('current-cans').textContent = currentCans;
-        // Remove the obstacle from the grid so it can't be clicked again
+  // Apply penalty: reduce cans if any
+  if (currentCans > 0) currentCans--;
+  document.getElementById('current-cans').textContent = currentCans;
+        // Animate then remove the obstacle from the grid so it can't be clicked again
         const cell = obstacle.closest('.grid-cell');
-        if (cell) cell.innerHTML = '';
-        // If strikes reach 3, game over
-        if (strikes >= 3) {
-          endGame();
+        if (obstacle) {
+          obstacle.classList.add('hit');
+          obstacle.addEventListener('animationend', () => {
+            if (cell) cell.innerHTML = '';
+          }, { once: true });
+        } else if (cell) {
+          cell.innerHTML = '';
         }
+        // no health mechanic — only penalty is losing a can
       }, { once: true });
     }
   } else {
@@ -254,18 +250,28 @@ function spawnWaterCan() {
     `;
     // Add click event to the water can
     const can = randomCell.querySelector('.water-can');
-  if (can) {
-      // When a can is clicked, increment the count and remove it from the DOM
+    if (can) {
+      // When a can is clicked, mark it collected to avoid being counted as a miss,
+      // increment the count, play sound, animate and remove it.
       can.addEventListener('click', function handleCanClick(e) {
         if (!gameActive) return;
+        // mark as collected so spawnWaterCan won't treat it as a miss
+        can.dataset.collected = '1';
         // Play collect sound if available
         SoundManager.play(SoundManager.collect);
         currentCans++;
         document.getElementById('current-cans').textContent = currentCans;
-        // Remove the can from the grid so it's visually gone
+        // Animate then remove the can from the grid so it's visually gone
         const cell = can.closest('.grid-cell');
-        if (cell) cell.innerHTML = '';
-        // If the player reached the goal, end the game early with a win
+        if (can) {
+          can.classList.add('collected');
+          can.addEventListener('animationend', () => {
+            if (cell) cell.innerHTML = '';
+          }, { once: true });
+        } else if (cell) {
+          cell.innerHTML = '';
+        }
+        // Check milestones and win
         checkMilestones();
         if (currentCans >= goalCans) {
           endGame();
@@ -275,16 +281,7 @@ function spawnWaterCan() {
   }
 }
 
-// Update the lives display (shows crosses for strikes)
-function updateLivesUI() {
-  const livesEl = document.getElementById('lives');
-  if (!livesEl) return;
-  const remaining = Math.max(0, 3 - strikes);
-  // Use heart icons for remaining lives and crosses for strikes
-  const hearts = '❤'.repeat(remaining);
-  const crosses = '✖'.repeat(Math.max(0, strikes));
-  livesEl.textContent = hearts + crosses;
-}
+// (Health/lives feature removed)
 
 // Initializes and starts a new game
 function startGame() {
@@ -300,8 +297,6 @@ function startGame() {
   const goalEl = document.getElementById('goal-cans');
   if (goalEl) goalEl.textContent = goalCans;
   // reset strikes and update lives
-  strikes = 0;
-  updateLivesUI();
   // compute milestones for this game
   setMilestones();
   createGrid(); // Set up the game grid
