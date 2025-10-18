@@ -58,12 +58,55 @@ Fonts:
 }
 
 
+/* Brand font stacks
+   Primary: Proxima Nova
+   Fallback: Avenir, system sans-serif
+   Serif fallback for body: Georgia
+*/
+@font-face {
+  /* If you have a webfont for Proxima Nova, define it here. Otherwise we fall back to system fonts. */
+  font-family: 'Proxima Nova';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Proxima Nova');
+}
+
 body {
-  font-family: 'Avenir', 'Proxima Nova', Arial, sans-serif;
+  /* Prefer using hosted Proxima Nova webfonts. Place WOFF2 files under /fonts and uncomment the @font-face blocks below.
+     Note: Proxima Nova is a licensed font; ensure you have rights to host it. If you don't, keep the local() fallback or use a similar open-source font.
+  */
+  font-family: 'Proxima Nova', 'Avenir', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   margin: 0;
   padding: 30px;
   background-color: var(--cream);
   color: var(--navy);
+}
+
+/* Example @font-face declarations you can enable when you add Proxima Nova WOFF2 files to /fonts:
+@font-face {
+  font-family: 'Proxima Nova';
+  font-style: normal;
+  font-weight: 400;
+  src: url('/fonts/ProximaNova-Regular.woff2') format('woff2');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Proxima Nova';
+  font-style: bold;
+  font-weight: 700;
+  src: url('/fonts/ProximaNova-Bold.woff2') format('woff2');
+  font-display: swap;
+}
+*/
+
+/* Utility class to switch to a more traditional serif body copy (Georgia) */
+.serif-font {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+/* Utility to explicitly use the brand sans stack (useful for headings) */
+.brand-font {
+  font-family: 'Proxima Nova', 'Avenir', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 .container {

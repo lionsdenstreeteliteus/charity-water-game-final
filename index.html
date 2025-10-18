@@ -9,10 +9,22 @@
 <body>
   <div class="container">
     <h1>Water Quest</h1>
-    <p class="game-instructions">Collect 20 items to complete the game!</p>
+    <p class="game-instructions">Collect <span id="goal-cans">20</span> items to complete the game!</p>
+    <nav class="difficulty-nav">
+      <label for="difficulty">Level:</label>
+      <select id="difficulty" aria-label="Select difficulty">
+        <option>Easy</option>
+        <option selected>Normal</option>
+        <option>Hard</option>
+      </select>
+      <span id="difficulty-label" class="difficulty-label">Normal</span>
+      &nbsp;&nbsp;
+      <button id="mute-toggle" aria-label="Toggle sound">🔊</button>
+    </nav>
     <div class="stats">
       <p>Cans Collected: <span id="current-cans">0</span></p>
       <p>Time Left: <span id="timer">30</span>s</p>
+      <p>Lives: <span id="lives">❤❤❤</span></p>
     </div>
     <div id="achievements" class="achievement"></div>
     <div class="game-grid"></div>
@@ -20,6 +32,31 @@
   <button id="reset-game">Reset</button>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Audio assets for collect and hit -->
+  <audio id="collect-sound" preload="auto">
+    <source src="img/collect.wav" type="audio/wav">
+  </audio>
+  <audio id="hit-sound" preload="auto">
+    <source src="img/hit.wav" type="audio/wav">
+  </audio>
+  <audio id="miss-sound" preload="auto">
+    <source src="img/miss.wav" type="audio/wav">
+  </audio>
+  <audio id="click-sound" preload="auto">
+    <source src="img/click.wav" type="audio/wav">
+  </audio>
+  <audio id="win-sound" preload="auto">
+    <source src="img/win.wav" type="audio/wav">
+  </audio>
   <script src="script.js"></script>
+  <footer class="site-footer">
+    <p>Learn more or donate to charity: water:</p>
+    <p>
+      <a href="https://www.charitywater.org/" target="_blank" rel="noopener noreferrer">charity: water — official website</a>
+      &nbsp;|&nbsp;
+      <a href="https://www.charitywater.org/donate" target="_blank" rel="noopener noreferrer">Donate to charity: water</a>
+    </p>
+    <p class="attribution">This game supports fundraising awareness for charity: water. Visit the links above to learn more.</p>
+  </footer>
 </body>
 </html>
